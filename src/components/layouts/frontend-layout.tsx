@@ -1,6 +1,6 @@
 import Navbar from "../navbar/navbar";
 
-export const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
+const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
@@ -10,3 +10,5 @@ export const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
     </>
   );
 };
+
+export default FrontendLayout;
