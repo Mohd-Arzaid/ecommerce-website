@@ -12,19 +12,190 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Category {
+  MEN
+  WOMEN
+  CHILDREN
+}
+
+enum ProductType {
+  T_SHIRTS
+  SHIRTS
+  HOODIES
+  JACKETS
+  JEANS
+  TROUSERS
+  SHORTS
+  SHOES
+}
+
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
+enum PaymentMethod {
+  STRIPE
+  CASH_ON_DELIVERY
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 model User {
-  id            String    @id
+  id            String  @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  phone         String?
+  role          Role    @default(USER)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+  accounts  Account[]
+  addresses Address[]
+  orders Order[]
 
   @@unique([email])
   @@map("user")
+}
+
+model Address {
+  id         String  @id @default(cuid()) // cuid - ex : cus_1234567890 - create unique id
+  firstName  String
+  lastName   String
+  phone      String
+  street     String
+  city       String
+  state      String
+  postalCode String?
+  isDefault  Boolean @default(false) // Default address or not
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("address") // Database table name: address
+}
+
+model Product {
+  id          String      @id @default(cuid()) // cuid - ex : pro_1234567890 - create unique id
+  name        String // Product name
+  description String? // Product description
+  price       Decimal     @db.Decimal(10, 2) // 10 digits, 2 decimal places - ex : 100.00
+  stock       Int         @default(0) // Available stock quantity - ex : 100 (default 0)
+  category    Category // Product category - ex : Men, Women, Children
+  productType ProductType // Product type - ex : T-Shirts, Shirts, Hoodies, Jackets, Jeans, Trousers, Shorts, Shoes
+  bestSeller  Boolean     @default(false) // Product is best seller or not
+  createdAt   DateTime    @default(now()) // Product creation date and time
+  updatedAt   DateTime    @updatedAt // Product update date and time
+
+  images ProductImage[] // Product images - one to many
+  sizes  ProductSize[] // Product sizes - one to many
+  colors ProductColor[] // Product colors - one to many
+  orderItems OrderItem[] // Product items - one to many
+
+  @@map("product") // Database table name: product
+}
+
+model ProductImage {
+  id        String   @id @default(cuid()) // cuid - ex : img_1234567890 - create unique id 
+  imageUrl  String // Image URL - ex : https://example.com/image.jpg
+  publicId  String // Public ID - ex : pro_1234567890_image1 , we need public id to delete the image from cloudinary
+  productId String // Product ID - ex : pro_1234567890 , productId is the foreign key to the product table
+  createdAt DateTime @default(now()) // Image creation date and time
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade) // Product relation - one to many
+
+  @@map("productImage") // Database table name: productImage 
+}
+
+model ProductSize {
+  id        String  @id @default(cuid()) // cuid - ex : size_1234567890 - create unique id
+  size      Size // Product size - ex : XS, S, M, L, XL, XXL
+  productId String // Product ID - ex : pro_1234567890 , productId is the foreign key to the product table
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade) // Product relation - one to many
+
+  createdAt DateTime @default(now()) // Size creation date and time
+
+  @@map("productSize") // Database table name: productSize
+}
+
+model ProductColor {
+  id        String  @id @default(cuid()) // cuid - ex : color_1234567890 - create unique id
+  name      String // Color name - ex : Red, Blue, Green, Yellow, Purple, Orange, Pink, Brown, Black, White
+  value     String // Color value - ex : #FF0000, #0000FF, #00FF00, #FFFF00, #FF00FF, #00FFFF, #FFA500, #800000, #FFFFFF
+  productId String // Product ID - ex : pro_1234567890 , productId is the foreign key to the product table
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade) // Product relation - one to many
+
+  createdAt DateTime @default(now()) // Color creation date and time
+
+  @@map("productColor") // Database table name: productColor
+}
+
+model Order {
+  id          Int    @id @default(autoincrement()) // autoincrement - ex : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  orderNumber String // Order number - ex : 1234567890
+
+  stripeSessionId String? @unique // to know if the order is paid or not and also to prevent user to pay for the same order again
+
+  subtotal Decimal @db.Decimal(10, 2) // Subtotal of the order - ex : 100.00 // subtotal = price * quantity
+  shipping Decimal @db.Decimal(10, 2) // Shipping cost - ex : 10.00 // shipping = 10.00
+  tax      Decimal @db.Decimal(10, 2) // Tax - ex : 10.00 // tax = 10.00
+  total    Decimal @db.Decimal(10, 2) // Total of the order - ex : 120.00 // total = subtotal + shipping + tax
+
+  paymentMethod PaymentMethod // Payment method - ex : STRIPE, CASH_ON_DELIVERY
+  paymentStatus PaymentStatus @default(PENDING) // Payment status - ex : PENDING, PAID, FAILED, REFUNDED (default PENDING)
+  orderStatus   OrderStatus @default(PENDING) // Order status - ex : PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED (default PENDING)
+
+  userId String // foreign key to the user table
+  user User @relation(fields: [userId], references: [id])
+
+  addressId String // foreign key to the address table
+  address Address @relation(fields: [addressId], references: [id])
+  orderItems OrderItem[]
+
+  @@map("order") // Database table name: order
+}
+
+
+model OrderItem {
+  id String @id @default(cuid())
+  quantity Int // Quantity of the item - ex : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  price Decimal @db.Decimal(10, 2) // Price of the item - ex : 100.00
+
+  size String 
+  color String
+  orderId Int 
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now()) // Order item creation date and time
+
+  @@map("orderItem") // Database table name: orderItem
 }
 
 model Session {
