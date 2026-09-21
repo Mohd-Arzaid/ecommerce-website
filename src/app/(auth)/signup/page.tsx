@@ -56,14 +56,14 @@ const SignupPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-8">
             <Input
               label="Full Name"
-              placeholder="John Doe"
+              placeholder="Enter your full name"
               type="text"
               {...register("name")}
               error={errors.name?.message}
             />
             <Input
               label="Email Address"
-              placeholder="email@gmail.com"
+              placeholder="Enter your email address"
               type="email"
               {...register("email")}
               error={errors.email?.message}
@@ -71,7 +71,7 @@ const SignupPage = () => {
             <Input
               label="Password"
               placeholder="Create a password"
-              type="password"
+              type="text"
               {...register("password")}
               error={errors.password?.message}
             />
@@ -90,7 +90,13 @@ const SignupPage = () => {
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Already have an account? <Link href="/signin">Log in</Link>
+            Already have an account?{" "}
+            <Link
+              className="font-semibold text-primary hover:underline"
+              href="/login"
+            >
+              Log in
+            </Link>
           </p>
         </div>
       </section>
