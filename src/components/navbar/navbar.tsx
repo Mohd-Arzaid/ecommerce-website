@@ -57,7 +57,7 @@ const Navbar = () => {
 
             {/* user */}
             <Link
-              href="/sign-in"
+              href="/login"
               className="rounded-full p-2 text-foreground transition-colors hover:bg-surface"
             >
               <FaRegUser size={22} />
@@ -97,7 +97,7 @@ const Navbar = () => {
             ))}
 
             <Link
-              href="/sign-in"
+              href="/login"
               className="mt-4 block rounded-lg bg-primary py-3 text-center text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
             >
               Sign In
