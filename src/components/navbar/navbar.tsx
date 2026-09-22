@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { FiMenu, FiX } from "react-icons/fi";
 import { LuSearch, LuShoppingBag, LuUser } from "react-icons/lu";
 import { useState } from "react";
+import { useSearchStore } from "@/store/search-store";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -14,6 +15,7 @@ const navLinks = [
 ];
 
 const Navbar = () => {
+  const { openSearch } = useSearchStore();
   const pathName = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -50,7 +52,10 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             {/* search */}
-            <button className="rounded-full p-2 text-foreground transition-colors hover:bg-surface">
+            <button
+              className="rounded-full p-2 text-foreground transition-colors hover:bg-surface"
+              onClick={() => openSearch()}
+            >
               <LuSearch size={22} strokeWidth={1.75} />
             </button>
 
