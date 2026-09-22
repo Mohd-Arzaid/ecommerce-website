@@ -63,10 +63,7 @@ const Cart = () => {
       <FrontendLayout>
         <section className="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-6 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full bg-surface">
-            <IoBagHandleOutline
-              className="text-muted-foreground"
-              size={48}
-            />
+            <IoBagHandleOutline className="text-muted-foreground" size={48} />
           </div>
 
           <h1 className="mt-8 text-3xl font-bold text-foreground">
@@ -205,7 +202,7 @@ const Cart = () => {
             </div>
 
             <Button fullWidth className="mt-8">
-              Proceed to Checkout
+              <Link href="/checkout">Proceed to Checkout</Link>
             </Button>
 
             <Link
