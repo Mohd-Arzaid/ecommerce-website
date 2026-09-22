@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IoSearch, IoBagOutline } from "react-icons/io5";
-import { FaRegUser } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
+import { LuSearch, LuShoppingBag, LuUser } from "react-icons/lu";
 import { useState } from "react";
 
 const navLinks = [
@@ -52,7 +51,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             {/* search */}
             <button className="rounded-full p-2 text-foreground transition-colors hover:bg-surface">
-              <IoSearch size={22} />
+              <LuSearch size={22} strokeWidth={1.75} />
             </button>
 
             {/* user */}
@@ -60,15 +59,15 @@ const Navbar = () => {
               href="/login"
               className="rounded-full p-2 text-foreground transition-colors hover:bg-surface"
             >
-              <FaRegUser size={22} />
+              <LuUser size={22} strokeWidth={1.75} />
             </Link>
 
-            {/* cart badge */}
+            {/* cart */}
             <Link
               href="/cart"
               className="rounded-full p-2 text-foreground transition-colors hover:bg-surface"
             >
-              <IoBagOutline size={22} />
+              <LuShoppingBag size={22} strokeWidth={1.75} />
             </Link>
           </div>
 
