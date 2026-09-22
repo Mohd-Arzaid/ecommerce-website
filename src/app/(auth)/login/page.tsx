@@ -4,6 +4,7 @@ import FrontendLayout from "@/components/layouts/frontend-layout";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
+import { loginWithGoogle } from "@/services/login-with-google";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -90,11 +91,12 @@ const LoginPage = () => {
               </a>
             </div>
 
-            <Button fullWidth disabled={isSubmitting}>
+            <Button type="submit" fullWidth disabled={isSubmitting}>
               {isSubmitting ? "Logging in..." : "Log In"}
             </Button>
 
             <Button
+              onClick={loginWithGoogle}
               fullWidth
               leftIcon={<FcGoogle size={18} />}
               variant="outline"
