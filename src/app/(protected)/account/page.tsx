@@ -1,8 +1,13 @@
+"use client";
+import Button from "@/components/ui/button";
+import { logout } from "@/server-actions/auth/logout";
 
 const Account = () => {
   return (
-    <div>AccountPage</div>
-  )
-}
+    <div>
+      <Button onClick={logout}>Log Out</Button>
+    </div>
+  );
+};
 
-export default Account
+export default Account;
