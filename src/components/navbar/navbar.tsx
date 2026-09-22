@@ -35,14 +35,18 @@ const Navbar = () => {
             const isActive = pathName === link.href;
             return (
               <Link
-                className={`relative text-sm font-medium
-  uppercase transition-colors ${
-    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-  }`}
+                className={`relative text-sm font-medium uppercase transition-colors ${
+                  isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
                 key={link.href}
                 href={link.href}
               >
                 {link.label}
+                {isActive && (
+                  <span className="absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-primary" />
+                )}
               </Link>
             );
           })}
