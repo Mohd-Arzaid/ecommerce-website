@@ -3,9 +3,12 @@
 import FrontendLayout from "@/components/layouts/frontend-layout";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
 
@@ -19,6 +22,7 @@ const SignUpSchema = z.object({
 type SignUpFormValues = z.infer<typeof SignUpSchema>;
 
 const SignupPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -34,7 +38,20 @@ const SignupPage = () => {
   });
 
   const onSubmit = async (data: SignUpFormValues) => {
-    console.log(data);
+    // authClient.signUp.email() is a Better Auth method used to create a user account using email and password
+    const { error } = await authClient.signUp.email({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      toast.error(error.message as string);
+      return;
+    }
+
+    toast.success("Registration successful");
+    router.replace("/account");
   };
 
   return (

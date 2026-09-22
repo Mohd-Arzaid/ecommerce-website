@@ -3,9 +3,12 @@
 import FrontendLayout from "@/components/layouts/frontend-layout";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
 
@@ -18,6 +21,7 @@ const LoginSchema = z.object({
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 const LoginPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -32,7 +36,19 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    console.log(data);
+    // authClient.signIn.email() is a Better Auth method used to login a user using email and password
+    const { error } = await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      toast.error(error.message as string);
+      return;
+    }
+
+    toast.success("Login successful");
+    router.replace("/account");
   };
 
   return (
@@ -66,7 +82,10 @@ const LoginPage = () => {
 
             {/* forgot password link */}
             <div className="flex justify-end text-sm">
-              <a className="font-medium text-primary hover:underline" href="/forgot-password">
+              <a
+                className="font-medium text-primary hover:underline"
+                href="/forgot-password"
+              >
                 Forgot Password?
               </a>
             </div>
@@ -87,7 +106,10 @@ const LoginPage = () => {
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Link className="font-semibold text-primary hover:underline" href="/signup">
+            <Link
+              className="font-semibold text-primary hover:underline"
+              href="/signup"
+            >
               Create an account
             </Link>
           </p>
