@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 
 const orders = [
@@ -113,7 +114,9 @@ export default function OrdersPage() {
                   <td className="px-6 py-5">{order.status}</td>
                   <td className="px-6 py-5">{order.date}</td>
                   <td className="px-6 py-5">
-                    <FiEye size={18} className="text-muted-foreground" />
+                    <Link href={`/admin/orders/${encodeURIComponent(order.id)}`}>
+                      <FiEye size={18} className="text-muted-foreground" />
+                    </Link>
                   </td>
                 </tr>
               ))}
