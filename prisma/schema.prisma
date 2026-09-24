@@ -92,6 +92,7 @@ model Address {
   city       String
   state      String
   postalCode String?
+  country    String
   isDefault  Boolean @default(false) // Default address or not
   userId     String
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)

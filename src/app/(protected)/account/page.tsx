@@ -1,13 +1,19 @@
-"use client";
-
 import FrontendLayout from "@/components/layouts/frontend-layout";
 import Breadcrumb from "@/components/ui/breadcrumb";
 import Button from "@/components/ui/button";
 import { logout } from "@/server-actions/auth/logout";
+import { getProfile } from "@/server-actions/user/get-profile";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { FiLogOut, FiMapPin, FiPackage, FiUser } from "react-icons/fi";
 
-const Account = () => {
+const Account = async () => {
+  const userProfile = await getProfile();
+  if (!userProfile) {
+    redirect("/login");
+  }
+  const address = userProfile.addresses[0];
+
   return (
     <FrontendLayout>
       <section className="mx-auto max-w-3xl py-10 sm:py-14">
@@ -41,7 +47,9 @@ const Account = () => {
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
                   Full Name
                 </p>
-                <p className="mt-1 font-medium text-foreground">Jane Doe</p>
+                <p className="mt-1 font-medium text-foreground">
+                  {userProfile.name}
+                </p>
               </div>
 
               <div className="rounded-xl bg-surface px-4 py-3">
@@ -49,7 +57,7 @@ const Account = () => {
                   Email
                 </p>
                 <p className="mt-1 break-all font-medium text-foreground">
-                  jane@example.com
+                  {userProfile.email}
                 </p>
               </div>
 
@@ -57,14 +65,21 @@ const Account = () => {
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
                   Phone
                 </p>
-                <p className="mt-1 font-medium text-foreground">Not provided</p>
+                <p className="mt-1 font-medium text-foreground">
+                  {userProfile.phone ?? "Not provided"}
+                </p>
               </div>
 
               <div className="rounded-xl bg-surface px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
                   Member Since
                 </p>
-                <p className="mt-1 font-medium text-foreground">January 2026</p>
+                <p className="mt-1 font-medium text-foreground">
+                  {userProfile.createdAt.toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
               </div>
             </div>
 
@@ -110,9 +125,25 @@ const Account = () => {
               </h2>
             </div>
 
-            <p className="text-sm text-muted-foreground">
-              No shipping address added yet.
-            </p>
+            {address ? (
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p className="font-medium text-foreground">
+                  {address.firstName} {address.lastName}
+                </p>
+
+                <p>{address.street}</p>
+                <p>
+                  {address.city}, {address.state}
+                </p>
+                <p>{address.country}</p>
+                {address.postalCode && <p>{address.postalCode}</p>}
+                <p>{address.phone}</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No shipping address added yet.
+              </p>
+            )}
           </div>
         </div>
       </section>
